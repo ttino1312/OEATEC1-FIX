@@ -379,7 +379,14 @@ export default function Home({ shows, episodes }: HomeProps) {
 export const getStaticProps: GetStaticProps = async () => {
   let shows: Show[] = [];
   let episodes: Recording[] = [];
-  const base = process.env.PHP_API_URL || 'http://localhost/radio-escolar';
+const base = process.env.PHP_API_URL;
+
+if (!base) {
+  return {
+    props: { shows: [], episodes: [] },
+    revalidate: 60
+  };
+}
   try {
     const [sRes, eRes] = await Promise.all([
       fetch(`${base}/api/shows/index.php`).catch(() => null),
